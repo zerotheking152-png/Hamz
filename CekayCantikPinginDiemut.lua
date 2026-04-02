@@ -31,25 +31,15 @@ local auraEnabled = false
 local auraRange = 55
 local auraConn
 
-local function loadRayfield()
-    local urls = {
-        "https://raw.githubusercontent.com/shlexware/Rayfield/main/source",
-        "https://raw.githubusercontent.com/SiriusSoftwareLtd/Rayfield/main/source.lua"
-    }
-    for _, url in ipairs(urls) do
-        local success, result = pcall(function()
-            return loadstring(game:HttpGet(url))()
-        end)
-        if success and result then
-            return result
-        end
-    end
-    return nil
-end
+-- RAYFIELD FIX (single stable link + debug)
+local Rayfield
+pcall(function()
+    Rayfield = loadstring(game:HttpGet("https://raw.githubusercontent.com/shlexware/Rayfield/main/source"))()
+end)
+print("Rayfield status:", Rayfield and "LOADED" or "FAILED")
 
-local Rayfield = loadRayfield()
 if not Rayfield then
-    warn("❌ Rayfield gagal load")
+    warn("❌ Rayfield gagal load - cek HTTP di executor lu")
     return
 end
 
@@ -63,12 +53,19 @@ local Window = Rayfield:CreateWindow({
 
 local MainTab = Window:CreateTab("Main", 4483362458)
 
+-- JOYSTICK + PlayerGui SAFE
+local playerGui = player:WaitForChild("PlayerGui", 10)
+if not playerGui then
+    warn("PlayerGui tidak ditemukan")
+    return
+end
+
 local JoystickFrame = Instance.new("Frame")
 JoystickFrame.Size = UDim2.new(0, 190, 0, 190)
 JoystickFrame.Position = UDim2.new(0, 30, 1, -220)
 JoystickFrame.BackgroundTransparency = 0.3
 JoystickFrame.Visible = false
-JoystickFrame.Parent = player:WaitForChild("PlayerGui")
+JoystickFrame.Parent = playerGui
 
 local JoystickInner = Instance.new("Frame")
 JoystickInner.Size = UDim2.new(0, 70, 0, 70)
