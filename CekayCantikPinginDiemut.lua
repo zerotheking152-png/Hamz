@@ -1,11 +1,3 @@
--- =============================================
--- ✅ CEKAYCANTIK V2 - NEON PINK EDITION (2026)
--- Keren banget, modern, gradient + glow neon
--- Support ALL Executor (Delta, Solara, Fluxus, Wave, dll)
--- Khusus Delta: pake gethui() biar 100% work & anti-detect
--- Mobile friendly + joystick tetap ada
--- =============================================
-
 local Players = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
@@ -15,18 +7,10 @@ local character = player.Character or player.CharacterAdded:Wait()
 local rootPart = character:WaitForChild("HumanoidRootPart")
 local humanoid = character:WaitForChild("Humanoid")
 
--- =============================================
--- SUPPORT ALL EXECUTOR (TERUTAMA DELTA)
--- =============================================
 local CoreGui = game:GetService("CoreGui")
 local hiddenUI = CoreGui
-pcall(function()
-    hiddenUI = gethui()  -- Delta & executor modern lain
-end)
+pcall(function() hiddenUI = gethui() end)
 
--- =============================================
--- GODMODE (AUTO ON RESPAWN)
--- =============================================
 local function enableGodMode()
     humanoid.MaxHealth = 9e9
     humanoid.Health = 9e9
@@ -48,11 +32,8 @@ player.CharacterAdded:Connect(function(newChar)
     enableGodMode()
 end)
 
--- =============================================
--- FLY & AURA VARIABLE
--- =============================================
 local flying = false
-local flySpeed = 120  -- naik sedikit biar lebih smooth
+local flySpeed = 120
 local keys = {W = false, A = false, S = false, D = false, Space = false, LeftControl = false}
 local bv, bg
 local moveVector = Vector3.new(0,0,0)
@@ -63,9 +44,6 @@ local auraEnabled = false
 local auraRange = 50
 local auraConn
 
--- =============================================
--- GUI KEREN (NEON PINK V2)
--- =============================================
 local ScreenGui = Instance.new("ScreenGui")
 ScreenGui.Name = "CekayCantikV2"
 ScreenGui.ResetOnSpawn = false
@@ -79,7 +57,6 @@ MainFrame.BackgroundColor3 = Color3.fromRGB(18, 18, 28)
 MainFrame.BorderSizePixel = 0
 MainFrame.Parent = ScreenGui
 
--- Gradient keren (dark → neon pink)
 local MainGradient = Instance.new("UIGradient")
 MainGradient.Color = ColorSequence.new{
     ColorSequenceKeypoint.new(0, Color3.fromRGB(25, 18, 35)),
@@ -98,7 +75,6 @@ MainStroke.Color = Color3.fromRGB(255, 80, 200)
 MainStroke.Transparency = 0.1
 MainStroke.Parent = MainFrame
 
--- Draggable (PC + Mobile)
 local dragging, dragInput, dragStart, startPos
 MainFrame.InputBegan:Connect(function(input)
     if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
@@ -119,7 +95,6 @@ RunService.RenderStepped:Connect(function()
     end
 end)
 
--- Title Neon Glow
 local Title = Instance.new("TextLabel")
 Title.Size = UDim2.new(1, 0, 0, 55)
 Title.BackgroundTransparency = 1
@@ -134,7 +109,6 @@ TitleStroke.Thickness = 2
 TitleStroke.Color = Color3.fromRGB(255, 200, 240)
 TitleStroke.Parent = Title
 
--- Close Button (neon red)
 local CloseButton = Instance.new("TextButton")
 CloseButton.Size = UDim2.new(0, 38, 0, 38)
 CloseButton.Position = UDim2.new(1, -45, 0, 10)
@@ -154,7 +128,6 @@ CloseStroke.Thickness = 2
 CloseStroke.Color = Color3.fromRGB(255, 100, 120)
 CloseStroke.Parent = CloseButton
 
--- Fly Button
 local FlyButton = Instance.new("TextButton")
 FlyButton.Size = UDim2.new(0.85, 0, 0, 58)
 FlyButton.Position = UDim2.new(0.075, 0, 0, 75)
@@ -174,7 +147,6 @@ FlyStroke.Thickness = 2
 FlyStroke.Color = Color3.fromRGB(255, 255, 255)
 FlyStroke.Parent = FlyButton
 
--- Aura Button
 local AuraButton = Instance.new("TextButton")
 AuraButton.Size = UDim2.new(0.85, 0, 0, 58)
 AuraButton.Position = UDim2.new(0.075, 0, 0, 145)
@@ -194,7 +166,6 @@ AuraStroke.Thickness = 2
 AuraStroke.Color = Color3.fromRGB(255, 255, 255)
 AuraStroke.Parent = AuraButton
 
--- Joystick (Mobile friendly)
 local JoystickFrame = Instance.new("Frame")
 JoystickFrame.Size = UDim2.new(0, 180, 0, 180)
 JoystickFrame.Position = UDim2.new(0, 25, 1, -210)
@@ -218,9 +189,6 @@ local KnobCorner = Instance.new("UICorner")
 KnobCorner.CornerRadius = UDim.new(1, 0)
 KnobCorner.Parent = JoystickKnob
 
--- =============================================
--- FLY LOGIC + JOYSTICK
--- =============================================
 local function updateJoystick(input)
     if not flying then return end
     local absPos = JoystickFrame.AbsolutePosition
@@ -229,17 +197,11 @@ local function updateJoystick(input)
     local relative = input.Position - absPos
     local offset = relative - center
     local radius = absSize.X / 2 * 0.8
-
-    if offset.Magnitude > radius then
-        offset = offset.Unit * radius
-    end
-
+    if offset.Magnitude > radius then offset = offset.Unit * radius end
     JoystickKnob.Position = UDim2.new(0, center.X + offset.X - 32.5, 0, center.Y + offset.Y - 32.5)
-
     local dir2D = offset / radius
     local forward = -dir2D.Y
     local right = dir2D.X
-
     local cam = workspace.CurrentCamera
     moveVector = (cam.CFrame.LookVector * forward) + (cam.CFrame.RightVector * right)
 end
@@ -253,61 +215,44 @@ JoystickFrame.InputBegan:Connect(function(input)
 end)
 
 UserInputService.InputChanged:Connect(function(input)
-    if input == currentTouch then
-        updateJoystick(input)
-    end
+    if input == currentTouch then updateJoystick(input) end
 end)
 
 JoystickFrame.InputEnded:Connect(function(input)
     if input == currentTouch then
         currentTouch = nil
         joystickActive = false
-        moveVector = Vector3.new(0, 0, 0)
+        moveVector = Vector3.new(0,0,0)
         JoystickKnob.Position = UDim2.new(0.5, -32.5, 0.5, -32.5)
     end
 end)
 
 local flyConnection
-
 local function startFly()
     if flying then return end
     flying = true
     humanoid.PlatformStand = true
     JoystickFrame.Visible = true
-
     bv = Instance.new("BodyVelocity")
-    bv.MaxForce = Vector3.new(1e6, 1e6, 1e6)
-    bv.Velocity = Vector3.new(0,0,0)
+    bv.MaxForce = Vector3.new(1e6,1e6,1e6)
+    bv.Velocity = Vector3.new()
     bv.Parent = rootPart
-
     bg = Instance.new("BodyGyro")
-    bg.MaxTorque = Vector3.new(1e6, 1e6, 1e6)
+    bg.MaxTorque = Vector3.new(1e6,1e6,1e6)
     bg.P = 12000
     bg.Parent = rootPart
-
     flyConnection = RunService.RenderStepped:Connect(function()
         if not flying then return end
-
         local cam = workspace.CurrentCamera
-        local moveDir = Vector3.new(0, 0, 0)
-
+        local moveDir = Vector3.new()
         if keys.W then moveDir += cam.CFrame.LookVector end
         if keys.S then moveDir -= cam.CFrame.LookVector end
         if keys.A then moveDir -= cam.CFrame.RightVector end
         if keys.D then moveDir += cam.CFrame.RightVector end
         if keys.Space then moveDir += Vector3.new(0,1,0) end
         if keys.LeftControl then moveDir -= Vector3.new(0,1,0) end
-
-        if joystickActive then
-            moveDir += moveVector
-        end
-
-        if moveDir.Magnitude > 0 then
-            bv.Velocity = moveDir.Unit * flySpeed
-        else
-            bv.Velocity = Vector3.new(0,0,0)
-        end
-
+        if joystickActive then moveDir += moveVector end
+        bv.Velocity = moveDir.Magnitude > 0 and moveDir.Unit * flySpeed or Vector3.new()
         bg.CFrame = cam.CFrame
     end)
 end
@@ -323,9 +268,6 @@ local function stopFly()
     moveVector = Vector3.new(0,0,0)
 end
 
--- =============================================
--- AURA KILL
--- =============================================
 local function startAuraKill()
     if auraEnabled then return end
     auraEnabled = true
@@ -350,9 +292,6 @@ local function stopAuraKill()
     if auraConn then auraConn:Disconnect() auraConn = nil end
 end
 
--- =============================================
--- KEYBIND & BUTTON
--- =============================================
 UserInputService.InputBegan:Connect(function(input, gp)
     if gp then return end
     local kc = input.KeyCode
@@ -381,7 +320,6 @@ UserInputService.InputEnded:Connect(function(input, gp)
     end
 end)
 
--- Button Click
 FlyButton.MouseButton1Click:Connect(function()
     if flying then
         stopFly()
@@ -409,6 +347,3 @@ end)
 CloseButton.MouseButton1Click:Connect(function()
     ScreenGui:Destroy()
 end)
-
-print("✅ CekayCantik V2 Loaded! (Neon Pink + Delta Optimized)")
-print("   Tekan F = Fly | V = Aura Kill | Joystick otomatis muncul di mobile")
